@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Brand Colors -->
+    <color name="primaryColor">#FF5722</color> <!-- vibrant orange -->
+    <color name="primaryDark">#E64A19</color>
+    <color name="primaryLight">#FF8A65</color>
+
+    <!-- Backgrounds -->
+    <color name="background_light">#F2F2F2</color>
+    <color name="surface_light">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="text_primary_light">#212121</color>
+    <color name="text_secondary_light">#757575</color>
+
+    <!-- Video Overlay -->
+    <color name="video_overlay">#88000000</color>
+
+    <!-- Buttons -->
+    <color name="buttonColor">#FF7043</color>
+    <color name="buttonTextColor">#FFFFFF</color>
+
+    <!-- Tabs -->
+    <color name="tabSelectedColor">#FF5722</color>
+    <color name="tabUnselectedColor">#757575</color>
+
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#BDBDBD</color>
+</resources>

@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp">
+
+    <ImageView
+        android:id="@+id/statusImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/status_item_bg" />
+
+    <ImageView
+        android:id="@+id/videoIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_video"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/downloadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        android:textSize="12sp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/ic_download"
+        android:textColor="@android:color/white"
+        android:padding="4dp"/>
+</FrameLayout>
