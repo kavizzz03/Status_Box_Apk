@@ -1,27 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_full_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="#000000">
 
+    <!-- Fullscreen Image -->
     <ImageView
         android:id="@+id/fullscreen_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:contentDescription="Status Image" />
 
+    <!-- Fullscreen Video -->
     <VideoView
         android:id="@+id/fullscreen_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <!-- Close Button -->
     <ImageView
         android:id="@+id/closeButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_close"
         android:layout_gravity="top|end"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:background="@drawable/circular_ripple"
+        android:padding="8dp"
+        android:contentDescription="Close Button" />
+
 </FrameLayout>

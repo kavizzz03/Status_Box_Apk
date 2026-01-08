@@ -2,12 +2,14 @@ package com.example.statusbox;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -33,42 +35,58 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     @Override
     public StatusViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        // CardView container
+        // CardView container with rounded corners
         CardView cardView = new CardView(context);
         cardView.setRadius(24);
-        cardView.setCardElevation(12);
+        cardView.setCardElevation(8);
         cardView.setUseCompatPadding(true);
-        cardView.setContentPadding(8,8,8,8);
+        cardView.setContentPadding(0, 0, 0, 0);
+        cardView.setLayoutParams(new ViewGroup.MarginLayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        cardView.setCardBackgroundColor(Color.WHITE);
 
-        // FrameLayout for stacking
+        // FrameLayout to stack items
         FrameLayout frameLayout = new FrameLayout(context);
 
         // Status Image
         ImageView statusImage = new ImageView(context);
         statusImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        frameLayout.addView(statusImage, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                500
-        ));
+        FrameLayout.LayoutParams imageParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 600
+        );
+        frameLayout.addView(statusImage, imageParams);
 
-        // Video icon overlay
+        // Bottom gradient overlay
+        View gradientOverlay = new View(context);
+        GradientDrawable gradientDrawable = new GradientDrawable(
+                GradientDrawable.Orientation.BOTTOM_TOP,
+                new int[]{0xAA000000, 0x00000000} // black fade to transparent
+        );
+        gradientOverlay.setBackground(gradientDrawable);
+        FrameLayout.LayoutParams gradientParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 200
+        );
+        gradientParams.gravity = Gravity.BOTTOM;
+        frameLayout.addView(gradientOverlay, gradientParams);
+
+        // Video icon overlay (centered)
         ImageView videoIcon = new ImageView(context);
         videoIcon.setImageResource(android.R.drawable.ic_media_play);
-        FrameLayout.LayoutParams iconParams = new FrameLayout.LayoutParams(80, 80);
-        iconParams.gravity = Gravity.TOP | Gravity.END;
+        videoIcon.setColorFilter(Color.WHITE);
+        FrameLayout.LayoutParams iconParams = new FrameLayout.LayoutParams(120, 120);
+        iconParams.gravity = Gravity.CENTER;
         videoIcon.setLayoutParams(iconParams);
         frameLayout.addView(videoIcon);
 
-        // Download button at bottom
-        Button downloadButton = new Button(context);
-        downloadButton.setText("Save");
-        downloadButton.setBackgroundColor(0xFF6200EE); // Material purple
-        downloadButton.setTextColor(0xFFFFFFFF);
-        FrameLayout.LayoutParams btnParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                120
-        );
-        btnParams.gravity = Gravity.BOTTOM;
+        // Download button as circular icon (bottom right)
+        ImageButton downloadButton = new ImageButton(context);
+        downloadButton.setImageResource(android.R.drawable.stat_sys_download_done);
+        downloadButton.setBackgroundResource(R.drawable.circular_ripple); // ripple drawable
+        downloadButton.setColorFilter(Color.WHITE);
+        FrameLayout.LayoutParams btnParams = new FrameLayout.LayoutParams(100, 100);
+        btnParams.gravity = Gravity.BOTTOM | Gravity.END;
+        btnParams.setMargins(0,0,24,24);
         downloadButton.setLayoutParams(btnParams);
         frameLayout.addView(downloadButton);
 
@@ -97,8 +115,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
         holder.downloadButton.setOnClickListener(v -> {
             File srcFile = new File(status.getPath());
-
-            // Public folder path
             File destFolder;
             if (status.isVideo()) {
                 destFolder = new File(Environment.getExternalStoragePublicDirectory(
@@ -107,7 +123,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
                 destFolder = new File(Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES), "StatusBox");
             }
-
             if (!destFolder.exists()) destFolder.mkdirs();
 
             // Handle duplicate filenames
@@ -123,7 +138,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
             Utils.copyFile(srcFile, destFile);
             Utils.refreshGallery(context, destFile);
-            Utils.showToast(context, "Saved to Gallery: " + destFile.getName());
+            Utils.showToast(context, "Saved: " + destFile.getName());
         });
     }
 
@@ -134,9 +149,9 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     static class StatusViewHolder extends RecyclerView.ViewHolder {
         ImageView statusImage, videoIcon;
-        Button downloadButton;
+        ImageButton downloadButton;
 
-        public StatusViewHolder(@NonNull View itemView, ImageView statusImage, ImageView videoIcon, Button downloadButton) {
+        public StatusViewHolder(@NonNull View itemView, ImageView statusImage, ImageView videoIcon, ImageButton downloadButton) {
             super(itemView);
             this.statusImage = statusImage;
             this.videoIcon = videoIcon;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Transparent fill -->
+    <solid android:color="@android:color/transparent"/>
+
+    <!-- WhatsApp green outline -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/primaryColor"/>   <!-- #075E54 -->
+
+    <!-- Rounded corners -->
+    <corners android:radius="20dp"/>
+
+    <!-- Optional: subtle shadow for depth on Lollipop+ -->
+    <!-- Uncomment if needed -->
+    <!-- <padding android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp"/> -->
+
+</shape>

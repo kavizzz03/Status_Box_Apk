@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Brand Colors -->
-    <color name="primaryColor">#FF5722</color> <!-- vibrant orange -->
-    <color name="primaryDark">#E64A19</color>
-    <color name="primaryLight">#FF8A65</color>
+    <!-- Primary WhatsApp Colors -->
+    <color name="primaryColor">#075E54</color>       <!-- WhatsApp green -->
+    <color name="primaryDark">#128C7E</color>        <!-- Dark green -->
+           <!-- Light green / accent -->
 
     <!-- Backgrounds -->
-    <color name="background_light">#F2F2F2</color>
+
     <color name="surface_light">#FFFFFF</color>
 
+    <color name="background_dark">#121B22</color>
+    <color name="surface_dark">#1E2C33</color>
+
     <!-- Text -->
-    <color name="text_primary_light">#212121</color>
-    <color name="text_secondary_light">#757575</color>
+    <color name="text_primary_light">#000000</color>
+    <color name="text_secondary_light">#4F4F4F</color>
+
+
+    <color name="text_secondary_dark">#B0B0B0</color>
 
     <!-- Video Overlay -->
     <color name="video_overlay">#88000000</color>
 
     <!-- Buttons -->
-    <color name="buttonColor">#FF7043</color>
+    <color name="buttonColor">#25D366</color>
     <color name="buttonTextColor">#FFFFFF</color>
 
     <!-- Tabs -->
-    <color name="tabSelectedColor">#FF5722</color>
+    <color name="tabSelectedColor">#075E54</color>
     <color name="tabUnselectedColor">#757575</color>
 
-    <color name="background_dark">#121212</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="text_primary_dark">#FFFFFF</color>
-    <color name="text_secondary_dark">#BDBDBD</color>
+    <!-- Extra Grays -->
+    <color name="light_gray">#DADADA</color>
+    <color name="medium_gray">#9E9E9E</color>
+    <color name="dark_gray">#262D31</color>
+
+    <color name="whatsappGreen">#25D366</color>
+    <color name="accentColor">#128C7E</color>
+    <color name="background_light">#ECE5DD</color>
+    <color name="text_primary_dark">#075E54</color>
+
+
+
 </resources>

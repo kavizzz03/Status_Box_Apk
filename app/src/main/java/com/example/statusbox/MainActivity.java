@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -25,11 +26,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int PERMISSION_REQUEST = 100;
+    private static final int PERMISSION_REQUEST = 2296;
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private StatusPagerAdapter pagerAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private List<Status> imageStatusList = new ArrayList<>();
     private List<Status> videoStatusList = new ArrayList<>();
@@ -39,32 +41,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // --- Initialize Views ---
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
 
+        // --- Set Adapter ---
         pagerAdapter = new StatusPagerAdapter(this, imageStatusList, videoStatusList);
         viewPager.setAdapter(pagerAdapter);
 
+        // --- Tabs setup ---
         new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> {
-                    if (position == 0) tab.setText("Images");
-                    else tab.setText("Videos");
-                }).attach();
+                (tab, position) -> tab.setText(position == 0 ? "Images" : "Videos"))
+                .attach();
 
-        if (!hasStoragePermission()) requestStoragePermission();
-        else loadStatuses();
+        // --- Swipe to refresh listener ---
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadStatuses();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+        // --- Check Permissions ---
+        if (!hasPermission()) {
+            requestPermission();
+        } else {
+            loadStatuses();
+        }
     }
 
-    private boolean hasStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+    // ----------- ALL FILE ACCESS CHECK -----------
+    private boolean hasPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
+        }
 
         int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int write = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return read == PackageManager.PERMISSION_GRANTED && write == PackageManager.PERMISSION_GRANTED;
+        return read == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestStoragePermission() {
+    // ----------- REQUEST ALL FILE ACCESS -----------
+    private void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -76,54 +92,74 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     PERMISSION_REQUEST);
         }
     }
 
+    // ----------- CALLBACK FOR PERMISSION -----------
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PERMISSION_REQUEST) {
-            if (hasStoragePermission()) loadStatuses();
-            else Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            if (hasPermission()) {
+                loadStatuses();
+            } else {
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST) {
-            if (hasStoragePermission()) loadStatuses();
-            else Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            if (hasPermission()) {
+                loadStatuses();
+            } else {
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    // ----------- LOAD WHATSAPP STATUS FILES -----------
     private void loadStatuses() {
         imageStatusList.clear();
         videoStatusList.clear();
 
-        String oldPath = Environment.getExternalStorageDirectory() + "/WhatsApp/Media/.Statuses";
-        String newPath = Environment.getExternalStorageDirectory() + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
+        // Old WhatsApp path
+        String pathOld = Environment.getExternalStorageDirectory() + "/WhatsApp/Media/.Statuses";
 
-        addStatusesFromFiles(new File(oldPath).listFiles());
-        addStatusesFromFiles(new File(newPath).listFiles());
+        // New Android/media WhatsApp path (Android 11+)
+        String pathNew = Environment.getExternalStorageDirectory() + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
 
-        if (imageStatusList.isEmpty() && videoStatusList.isEmpty())
+        addStatusFiles(new File(pathOld));
+        addStatusFiles(new File(pathNew));
+
+        if (imageStatusList.isEmpty() && videoStatusList.isEmpty()) {
             Toast.makeText(this, "No statuses found", Toast.LENGTH_SHORT).show();
-        else pagerAdapter.notifyDataSetChanged();
+        }
+
+        pagerAdapter.notifyDataSetChanged();
     }
 
-    private void addStatusesFromFiles(File[] files) {
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    String name = file.getName();
-                    boolean isVideo = name.endsWith(".mp4");
-                    boolean isImage = name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png");
+    // ----------- ADD STATUS FILES -----------
+    private void addStatusFiles(File folder) {
+        if (folder == null || !folder.exists()) return;
 
-                    if (isVideo) videoStatusList.add(new Status(name, file.getAbsolutePath(), true));
-                    else if (isImage) imageStatusList.add(new Status(name, file.getAbsolutePath(), false));
+        File[] files = folder.listFiles();
+        if (files == null) return;
+
+        for (File f : files) {
+            if (f.isFile()) {
+                String name = f.getName();
+                String path = f.getAbsolutePath();
+
+                if (name.endsWith(".mp4")) {
+                    videoStatusList.add(new Status(name, path, true));
+                } else if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")) {
+                    imageStatusList.add(new Status(name, path, false));
                 }
             }
         }
