@@ -1,6 +1,6 @@
 # StatusBox
 
-StatusBox is an Android application that lets you **save, view, and share WhatsApp-style statuses** – both images and videos – with a clean and intuitive interface. Designed for speed, simplicity, and a smooth user experience, StatusBox helps you **keep your favorite statuses forever**.  
+StatusBox is an Android application that lets you **save, view, and share WhatsApp-style statuses** – both images and videos – with a clean and intuitive interface. Designed for speed, simplicity, and a smooth user experience, StatusBox helps you **keep your favorite statuses forever**.
 
 ---
 
@@ -27,6 +27,7 @@ StatusBox is an Android application that lets you **save, view, and share WhatsA
 
 ## 📂 Installation
 
-1. Clone the repository:  
+1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/StatusBox.git
+git clone https://github.com/kavizzz03/Status_Box_Apk.git
+
